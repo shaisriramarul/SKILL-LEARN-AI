@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkillPath AI - Personalized Learning</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f3f5fb;color:#20243a}
+header{background:#29245c;color:white;padding:22px 5%;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px}
+header h1{font-size:25px}
+header select{padding:10px;border-radius:8px;border:0}
+.container{display:flex;min-height:calc(100vh - 75px)}
+.sidebar{width:230px;background:#fff;padding:22px 15px;box-shadow:2px 0 10px #ddd}
+.sidebar h3{margin:10px 8px 20px;color:#29245c}
+.sidebar button{display:block;width:100%;padding:13px;margin:5px 0;border:0;background:white;text-align:left;border-radius:8px;cursor:pointer;font-size:14px}
+.sidebar button:hover,.sidebar button.active{background:#e9e7ff;color:#493bc2}
+main{flex:1;padding:30px;min-width:0}
+.page{display:none}
+.page.active{display:block}
+h2{margin-bottom:10px;color:#29245c}
+.subtitle{color:#777;margin-bottom:25px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:18px;margin:20px 0}
+.card{background:white;padding:22px;border-radius:13px;box-shadow:0 3px 12px #ddd}
+.card h3{font-size:15px;color:#777;margin-bottom:12px}
+.number{font-size:30px;font-weight:bold;color:#493bc2}
+.panel{background:white;padding:22px;border-radius:13px;margin:18px 0;box-shadow:0 3px 12px #ddd}
+button.primary{background:#5144c7;color:white;border:0;padding:11px 18px;border-radius:7px;cursor:pointer;margin:8px 5px 8px 0}
+button.secondary{background:#e9e7ff;color:#4034a0;border:0;padding:10px 15px;border-radius:7px;cursor:pointer}
+input,select,textarea{padding:11px;border:1px solid #ddd;border-radius:7px;margin:7px 5px 7px 0;max-width:100%}
+input{min-width:190px}
+.progress{height:12px;background:#e6e6ef;border-radius:10px;margin:12px 0}
+.progress div{height:100%;background:#5144c7;border-radius:10px;width:0%}
+.skill{display:inline-block;background:#e9e7ff;color:#4437aa;padding:9px 13px;border-radius:20px;margin:5px}
+.item{padding:15px;border-bottom:1px solid #eee}
+.item:last-child{border:0}
+#chatBox{height:250px;overflow-y:auto;background:#f7f7fc;padding:15px;border-radius:9px;margin:15px 0}
+.message{padding:10px;margin:8px 0;border-radius:8px;background:#e9e7ff}
+table{width:100%;border-collapse:collapse}
+td,th{text-align:left;padding:12px;border-bottom:1px solid #eee}
+footer{text-align:center;padding:20px;color:#777}
+@media(max-width:700px){
+.container{display:block}
+.sidebar{width:100%;display:grid;grid-template-columns:repeat(2,1fr)}
+.sidebar h3{grid-column:1/-1}
+main{padding:18px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🎓 SkillPath AI</h1>
+<div>
+<label>Dashboard: </label>
+<select id="role" onchange="changeRole()">
+<option value="Student">Student</option>
+<option value="Faculty">Faculty / Mentor</option>
+<option value="Admin">Admin</option>
+</select>
+</div>
+</header>
+
+<div class="container">
+
+<aside class="sidebar">
+<h3>SKILLPATH MENU</h3>
+<button onclick="showPage('dashboard',this)" class="active">🏠 Dashboard</button>
+<button onclick="showPage('profile',this)">👤 My Profile</button>
+<button onclick="showPage('skills',this)">💡 My Skills</button>
+<button onclick="showPage('career',this)">🎯 Career Goals</button>
+<button onclick="showPage('roadmap',this)">🗺️ Learning Roadmap</button>
+<button onclick="showPage('courses',this)">📚 Courses</button>
+<button onclick="showPage('assessment',this)">📝 Assessment</button>
+<button onclick="showPage('progress',this)">📊 Progress</button>
+<button onclick="showPage('mentor',this)">🤖 AI Mentor</button>
+<button onclick="showPage('agents',this)">⚙️ AI Agents</button>
+</aside>
+
+<main>
+
+<section id="dashboard" class="page active">
+<h2 id="welcome">Welcome to SkillPath AI!</h2>
+<p class="subtitle">Your personalized AI-powered learning platform.</p>
+
+<div class="cards">
+<div class="card"><h3>My Skills</h3><div class="number" id="skillCount">3</div></div>
+<div class="card"><h3>Learning Progress</h3><div class="number" id="dashProgress">20%</div></div>
+<div class="card"><h3>Courses Completed</h3><div class="number" id="courseCount">1</div></div>
+<div class="card"><h3>Career Goal</h3><div class="number" style="font-size:18px" id="dashCareer">Full Stack Developer</div></div>
+</div>
+
+<div class="panel">
+<h3>My Learning Progress</h3>
+<div class="progress"><div id="dashBar"></div></div>
+<p id="recommendation">Keep learning! Your next step is JavaScript.</p>
+</div>
+
+<div class="panel">
+<h3>✨ AI Recommendation</h3>
+<p id="recommendText">Learn JavaScript, React and Node.js to move towards your career goal.</p>
+</div>
+</section>
+
+<section id="profile" class="page">
+<h2>My Profile</h2>
+<div class="panel">
+<label>Name</label><br>
+<input id="name" value="Student Name"><br>
+<label>Email</label><br>
+<input id="email" type="email" value="student@example.com"><br>
+<label>Career Goal</label><br>
+<input id="profileCareer" value="Full Stack Developer"><br>
+<button class="primary" onclick="saveProfile()">Save Profile</button>
+<p id="profileMessage"></p>
+</div>
+</section>
+
+<section id="skills" class="page">
+<h2>My Skills</h2>
+<p class="subtitle">Add your existing technical skills.</p>
+<div class="panel">
+<div id="existingSkills"></div>
+<input id="newSkill" placeholder="Enter a skill">
+<button class="primary" onclick="addSkill()">+ Add Skill</button>
+</div>
+<div class="panel">
+<h3>Skills to Improve</h3>
+<div id="missingSkills"></div>
+</div>
+</section>
+
+<section id="career" class="page">
+<h2>Career Explorer</h2>
+<p class="subtitle">Choose your dream career and discover the required skills.</p>
+<div class="panel">
+<select id="careerSelect" onchange="updateCareer()">
+<option>Full Stack Developer</option>
+<option>Frontend Developer</option>
+<option>Backend Developer</option>
+<option>Data Scientist</option>
+<option>AI Engineer</option>
+<option>Cybersecurity Analyst</option>
+</select>
+<button class="primary" onclick="updateCareer()">Analyze Career</button>
+<h3 id="careerName">Full Stack Developer</h3>
+<p id="careerDescription">Build complete web applications.</p>
+<div id="careerSkills"></div>
+<h3>Skill Match: <span id="careerMatch">25%</span></h3>
+<div class="progress"><div id="careerBar"></div></div>
+</div>
+</section>
+
+<section id="roadmap" class="page">
+<h2>Personalized Learning Roadmap</h2>
+<p class="subtitle">Your AI-generated learning journey.</p>
+<div class="panel" id="roadmapList"></div>
+</section>
+
+<section id="courses" class="page">
+<h2>Recommended Courses</h2>
+<div class="panel">
+<div class="item"><h3>JavaScript Fundamentals</h3><p>Learn variables, functions and programming basics.</p><button class="primary" onclick="completeCourse(this)">Mark Complete</button></div>
+<div class="item"><h3>React JS</h3><p>Build modern interactive user interfaces.</p><button class="primary" onclick="completeCourse(this)">Mark Complete</button></div>
+<div class="item"><h3>Node.js</h3><p>Learn server-side development.</p><button class="primary" onclick="completeCourse(this)">Mark Complete</button></div>
+<div class="item"><h3>Database Management</h3><p>Learn how to manage application data.</p><button class="primary" onclick="completeCourse(this)">Mark Complete</button></div>
+</div>
+</section>
+
+<section id="assessment" class="page">
+<h2>Skill Assessment</h2>
+<div class="panel">
+<p><b>1. Which language is mainly used to make web pages interactive?</b></p>
+<label><input type="radio" name="q1" value="0"> Python</label><br>
+<label><input type="radio" name="q1" value="1"> JavaScript</label><br>
+<label><input type="radio" name="q1" value="0"> SQL</label><br><br>
+<p><b>2. Which technology is used to build user interfaces?</b></p>
+<label><input type="radio" name="q2" value="1"> React</label><br>
+<label><input type="radio" name="q2" value="0"> MySQL</label><br>
+<label><input type="radio" name="q2" value="0"> Python</label><br>
+<button class="primary" onclick="submitAssessment()">Submit Assessment</button>
+<h3 id="assessmentResult"></h3>
+</div>
+</section>
+
+<section id="progress" class="page">
+<h2>My Progress</h2>
+<div class="panel">
+<h3>Overall Completion: <span id="progressNumber">20%</span></h3>
+<div class="progress"><div id="progressBar"></div></div>
+<p id="activityText">You are making progress. Keep going!</p>
+</div>
+<div class="panel">
+<h3>Learning Activity</h3>
+<p id="activityCount">Completed courses: 1</p>
+</div>
+</section>
+
+<section id="mentor" class="page">
+<h2>🤖 AI Learning Mentor</h2>
+<p class="subtitle">Ask questions and get learning guidance.</p>
+<div class="panel">
+<div id="chatBox">
+<div class="message">AI Mentor: Hello! I am your learning assistant. Ask me about your career or skills.</div>
+</div>
+<input id="chatInput" placeholder="Ask your AI mentor..." style="width:70%">
+<button class="primary" onclick="sendMessage()">Send</button>
+</div>
+</section>
+
+<section id="agents" class="page">
+<h2>Multi-Agent AI System</h2>
+<p class="subtitle">Specialized agents working together to personalize learning.</p>
+<div class="cards">
+<div class="card"><h3>🔍 Skill Analyzer Agent</h3><p>Identifies existing skills and skill gaps.</p></div>
+<div class="card"><h3>🎯 Career Advisor Agent</h3><p>Suggests suitable career pathways.</p></div>
+<div class="card"><h3>📚 Learning Agent</h3><p>Creates personalized learning paths.</p></div>
+<div class="card"><h3>📝 Assessment Agent</h3><p>Evaluates learner knowledge.</p></div>
+<div class="card"><h3>📈 Progress Agent</h3><p>Tracks learning performance.</p></div>
+<div class="card"><h3>🤖 AI Mentor Agent</h3><p>Provides continuous learning support.</p></div>
+</div>
+<div class="panel">
+<button class="primary" onclick="runAgents()">Run AI Agents</button>
+<p id="agentResult">AI agents are ready to analyze your learning profile.</p>
+</div>
+</section>
+
+</main>
+</div>
+
+<footer>SkillPath AI | Personalized Learning Platform | 2026</footer>
+
+<script>
+let skills=["Python","SQL","HTML"];
+let completed=1;
+let progress=20;
+let career="Full Stack Developer";
+
+const careerData={
+"Full Stack Developer":["JavaScript","React","Node.js","MongoDB"],
+"Frontend Developer":["HTML","CSS","JavaScript","React"],
+"Backend Developer":["Python","Node.js","SQL","APIs"],
+"Data Scientist":["Python","Statistics","Machine Learning","SQL"],
+"AI Engineer":["Python","Machine Learning","Deep Learning","TensorFlow"],
+"Cybersecurity Analyst":["Networking","Linux","Security","Python"]
+};
+
+function showPage(page,button){
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ document.getElementById(page).classList.add("active");
+ document.querySelectorAll(".sidebar button").forEach(b=>b.classList.remove("active"));
+ if(button)button.classList.add("active");
+}
+
+function changeRole(){
+ let role=document.getElementById("role").value;
+ document.getElementById("welcome").innerText="Welcome, "+role+"!";
+ if(role==="Student"){
+ document.getElementById("recommendation").innerText="Continue your personalized learning journey.";
+ }else if(role==="Faculty"){
+ document.getElementById("recommendation").innerText="Faculty Dashboard: Monitor students, review learning progress and provide feedback.";
+ }else{
+ document.getElementById("recommendation").innerText="Admin Dashboard: Manage users, courses, learning analytics and AI agents.";
+ }
+}
+
+function saveProfile(){
+ document.getElementById("profileMessage").innerText="Profile saved successfully!";
+ document.getElementById("dashCareer").innerText=document.getElementById("profileCareer").value;
+}
+
+function renderSkills(){
+ document.getElementById("existingSkills").innerHTML=skills.map(s=>'<span class="skill">'+s+'</span>').join("");
+ document.getElementById("skillCount").innerText=skills.length;
+ let missing=careerData[career].filter(s=>!skills.map(x=>x.toLowerCase()).includes(s.toLowerCase()));
+ document.getElementById("missingSkills").innerHTML=missing.map(s=>'<span class="skill">'+s+'</span>').join("");
+}
+
+function addSkill(){
+ let input=document.getElementById("newSkill");
+ let value=input.value.trim();
+ if(value&&!skills.some(s=>s.toLowerCase()===value.toLowerCase())){
+ skills.push(value);
+ input.value="";
+ renderSkills();
+ updateCareer();
+ }else if(!value){
+ alert("Please enter a skill.");
+ }
+}
+
+function updateCareer(){
+ career=document.getElementById("careerSelect").value;
+ document.getElementById("careerName").innerText=career;
+ document.getElementById("dashCareer").innerText=career;
+ document.getElementById("profileCareer").value=career;
+ document.getElementById("careerDescription").innerText="Build your skills to become a "+career+".";
+ let required=careerData[career];
+ let matched=required.filter(s=>skills.map(x=>x.toLowerCase()).includes(s.toLowerCase()));
+ let percentage=Math.round(matched.length/required.length*100);
+ document.getElementById("careerMatch").innerText=percentage+"%";
+ document.getElementById("careerBar").style.width=percentage+"%";
+ document.getElementById("careerSkills").innerHTML="<b>Required Skills:</b><br>"+required.map(s=>'<span class="skill">'+s+'</span>').join("");
+ renderSkills();
+ renderRoadmap();
+}
+
+function renderRoadmap(){
+ let required=careerData[career];
+ document.getElementById("roadmapList").innerHTML=required.map((s,i)=>
+ '<div class="item"><h3>Step '+(i+1)+': '+s+'</h3><p>Learn and practice '+s+' to improve your career readiness.</p></div>'
+ ).join("");
+}
+
+function completeCourse(button){
+ if(!button.disabled){
+ completed++;
+ progress=Math.min(100,progress+10);
+ button.innerText="Completed ✓";
+ button.disabled=true;
+ render();
+ }
+}
+
+function render(){
+ document.getElementById("dashProgress").innerText=progress+"%";
+ document.getElementById("progressNumber").innerText=progress+"%";
+ document.getElementById("dashBar").style.width=progress+"%";
+ document.getElementById("progressBar").style.width=progress+"%";
+ document.getElementById("courseCount").innerText=completed;
+ document.getElementById("activityCount").innerText="Completed courses: "+completed;
+ document.getElementById("activityText").innerText="Your learning progress is "+progress+"%. Keep learning!";
+}
+
+function submitAssessment(){
+ let a=document.querySelector('input[name="q1"]:checked');
+ let b=document.querySelector('input[name="q2"]:checked');
+ if(!a||!b){
+ alert("Please answer both questions.");
+ return;
+ }
+ let score=Number(a.value)+Number(b.value);
+ document.getElementById("assessmentResult").innerText="Your score: "+score+"/2. "+(score===2?"Excellent work!":"Keep practicing and try again!");
+ if(score===2){
+ progress=Math.min(100,progress+10);
+ render();
+ }
+}
+
+function sendMessage(){
+ let input=document.getElementById("chatInput");
+ let question=input.value.trim();
+ if(!question)return;
+ let box=document.getElementById("chatBox");
+ box.innerHTML+='<div class="message"><b>You:</b> '+escapeHTML(question)+'</div>';
+ let q=question.toLowerCase();
+ let answer="Start with the fundamentals, practice regularly, and build small projects. I recommend following your learning roadmap.";
+ if(q.includes("skill"))answer="Your current skills are "+skills.join(", ")+". Your next step is to learn "+careerData[career].filter(s=>!skills.includes(s)).join(", ")+".";
+ else if(q.includes("career"))answer="Your selected career goal is "+career+". Keep building the required skills and complete practical projects.";
+ else if(q.includes("progress"))answer="Your current learning progress is "+progress+"%. Keep completing courses and assessments!";
+ else if(q.includes("javascript"))answer="JavaScript is an important skill for web development. Start with variables, functions, arrays and DOM.";
+ box.innerHTML+='<div class="message"><b>AI Mentor:</b> '+answer+'</div>';
+ box.scrollTop=box.scrollHeight;
+ input.value="";
+}
+
+function escapeHTML(text){
+ return text.replace(/[&<>"']/g,function(c){
+ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+ });
+}
+
+function runAgents(){
+ let missing=careerData[career].filter(s=>!skills.includes(s));
+ document.getElementById("agentResult").innerHTML=
+ "<b>Agent analysis completed!</b><br>Skill Analyzer: Profile analyzed.<br>Career Advisor: "+career+" selected.<br>Learning Agent: Recommended "+missing.join(", ")+".<br>Assessment Agent: Ready for assessment.<br>Progress Agent: Current progress "+progress+"%.<br>AI Mentor: Ready to assist.";
+}
+
+renderSkills();
+updateCareer();
+render();
+</script>
+</body>
+</html>
